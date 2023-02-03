@@ -11,7 +11,7 @@ import struct
 from typing import NamedTuple,Optional,Tuple
 from n64savegametools.byteswap import swap
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 class MediaFormat(str, Enum):
     CART = "N"
@@ -85,10 +85,10 @@ def get_rom_info(rom_path: Path, calculate_md5_hash: bool = True) -> Optional[N6
             hash_little_endian_md5=hash_little_endian_md5
         )
     except (OSError, ValueError):
-        logger.exception("Failed to read ROM metadata: %s", rom_path)
+        _logger.exception("Failed to read ROM metadata: %s", rom_path)
         return None
     if calculate_md5_hash and rom_info.hash_little_endian_md5 is None:
-        logger.error("Failed to calculate ROM MD5 hash: %s", rom_path)
+        _logger.error("Failed to calculate ROM MD5 hash: %s", rom_path)
         return None
     return rom_info
 
