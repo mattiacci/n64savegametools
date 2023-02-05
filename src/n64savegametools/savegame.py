@@ -131,7 +131,7 @@ class Project64Savegame(Savegame):
             self.sram = _SaveData(files.sram.read_bytes(), _Endianness.LITTLE_ENDIAN)
         if files.flashram.is_file():
             self.flashram = _SaveData(files.flashram.read_bytes().ljust(_FLASHRAM_BYTESIZE, b'\x00'), _Endianness.LITTLE_ENDIAN)
-        self.mpks = [_SaveData(mpk.read_bytes()) if mpk.is_file() else None for mpk in files.mpks]
+        self.mpks = [_mpk_to_savegame_data(mpk.read_bytes()) if mpk.is_file() else None for mpk in files.mpks]
         return self
     def _get_save_files(self, rom_path: Path, savedir_path: Path) -> _MultipleSaveFiles:
         if not rom_path.is_file():
