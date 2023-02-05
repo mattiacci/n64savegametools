@@ -45,7 +45,7 @@ def copy_saves_for_rom(rom_path: Union[Path, str], src_save_format: SaveFormat, 
     if src_savegame.has_save():
         dst_savegame = _new_savegame(dst_save_format).import_from_savegame(src_savegame)
         # TODO: Should this method do a backup first, or should that be a separate call?
-        dst_savegame.export_to_disk(rom_path, dst_savedir)
+        dst_savegame.export_to_disk(rom_path, dst_savedir, backup=True)
         _logger.info("copy complete: %s", rom_path)
     else:
         _logger.info("no save found: %s", rom_path)

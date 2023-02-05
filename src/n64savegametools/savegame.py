@@ -24,7 +24,7 @@ class Savegame():
     sram: Optional[_SaveData] = None
     flashram: Optional[_SaveData] = None
     mpks: List[Optional[_SaveData]] = [None, None, None, None]
-    def export_to_disk(self, rom_path: Path, savedir_path: Path):
+    def export_to_disk(self, rom_path: Path, savedir_path: Path, backup: bool):
         pass
     def import_from_disk(self, ro_path: Path, savedir_path: Path):
         pass
@@ -38,8 +38,10 @@ class Savegame():
         return self
 
 class Everdrive64Savegame(Savegame):
-    def export_to_disk(self, rom_path: Path, savedir_path: Path):
+    def export_to_disk(self, rom_path: Path, savedir_path: Path, backup: bool):
         files = self._get_save_files(rom_path, savedir_path)
+        if backup:
+            _backup_save_files(files)
         _export_to_file(self.eeprom, files.eeprom)
         _export_to_file(self.sram, files.sram)
         _export_to_file(self.flashram, files.flashram)
@@ -70,8 +72,10 @@ class Everdrive64Savegame(Savegame):
         )
 
 class Mupen64PlusSavegame(Savegame):
-    def export_to_disk(self, rom_path: Path, savedir_path: Path):
+    def export_to_disk(self, rom_path: Path, savedir_path: Path, backup: bool):
         dst_path = self._get_save_file(rom_path, savedir_path)
+        if backup:
+            _backup_save_file(dst_path)
         _logger.debug("converting savegame to Mupen64+ format")
         eeprom = self.eeprom or _SaveData(bytearray())
         eeprom.data.ljust(_EEPROM_BYTESIZES[1], b'\xff')
@@ -109,8 +113,10 @@ class Mupen64PlusSavegame(Savegame):
         return savedir_path / "{}.srm".format(rom_path.stem)
 
 class Project64Savegame(Savegame):
-    def export_to_disk(self, rom_path: Path, savedir_path: Path):
+    def export_to_disk(self, rom_path: Path, savedir_path: Path, backup: bool):
         files = self._get_save_files(rom_path, savedir_path)
+        if backup:
+            _backup_save_files(files)
         _export_to_file(self.eeprom, files.eeprom)
         _export_to_file(self.sram, files.sram, endianness=_Endianness.LITTLE_ENDIAN)
         _export_to_file(self.flashram, files.flashram, endianness=_Endianness.LITTLE_ENDIAN)
@@ -191,6 +197,22 @@ class _SaveData():
             self.endianness = endianness
         return self
 
+def _backup_save_files(save_files: _MultipleSaveFiles):
+    for key in save_files._fields:
+        src_file = getattr(save_files, key)
+        if isinstance(src_file, list):
+            for item in src_file:
+                _backup_save_file(item)
+        elif src_file:
+            _backup_save_file(src_file)
+
+def _backup_save_file(src_path: Optional[Path]):
+    if src_path is not None and src_path.exists():
+        dst_path = src_path.parent / "backup" / src_path.name
+        _logger.debug("copy from %s to %s", src_path, dst_path)
+        dst_path.parent.mkdir(parents = True, exist_ok=True)
+        src_path.replace(dst_path)
+
 def _export_to_file(save_data: Optional[_SaveData], dst_path: Path, endianness = _Endianness.BIG_ENDIAN):
     if save_data is not None and dst_path is not None:
         _logger.debug("exporting to %s", dst_path)
@@ -199,6 +221,7 @@ def _export_to_file(save_data: Optional[_SaveData], dst_path: Path, endianness =
         dst_path.write_bytes(save_data.data)
 
 def _is_effectively_empty_memory_pak(data: bytes) -> bool:
+    # TODO: Use a memoryview to avoid doing unnecessary copies (as I believe slicing copies).
     if data[0:0x102] != _FORMATTED_MPK[0:0x102]:
         return False
     for byte in data[0x10a:0x200]:
