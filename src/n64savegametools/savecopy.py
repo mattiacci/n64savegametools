@@ -6,8 +6,6 @@ Tools to copy a game's savegame between formats
 from enum import Enum
 import logging
 from pathlib import Path
-import shutil
-import time
 from typing import Union
 from n64savegametools.savegame import Everdrive64Savegame,Mupen64PlusSavegame,Project64Savegame,Savegame
 
@@ -18,16 +16,16 @@ class SaveFormat(str, Enum):
     MUPEN64PLUS = "MUPEN64PLUS"
     PROJECT64 = "PROJECT64"
 
-def copy_saves_for_all_roms(rom_dir: Union[Path, str], recursive: bool, src_save_format: SaveFormat, src_savedir: Union[Path, str], dst_save_format: SaveFormat, dst_savedir: Union[Path, str]):
+def copy_saves_for_all_roms(rom_dir: Union[Path, str], recursive: bool, src_save_format: SaveFormat, src_savedir: Union[Path, str], dst_save_format: SaveFormat, dst_savedir: Union[Path, str], backup: bool = True, force: bool = False):
     """For all games in the ROM diretory, copy the save files from one save location to another."""
     rom_dir = Path(rom_dir)
     if not rom_dir.is_dir():
         raise FileNotFoundError("Provided ROM directory isn't a directory: {}".format(rom_dir))
     rom_paths = sorted(rom_dir.rglob(_rom_file_pattern) if recursive else rom_dir.glob(_rom_file_pattern))
     for rom_path in rom_paths:
-        copy_saves_for_rom(rom_path, src_save_format, src_savedir, dst_save_format, dst_savedir)
+        copy_saves_for_rom(rom_path, src_save_format, src_savedir, dst_save_format, dst_savedir, backup, force)
 
-def copy_saves_for_rom(rom_path: Union[Path, str], src_save_format: SaveFormat, src_savedir: Union[Path, str], dst_save_format: SaveFormat, dst_savedir: Union[Path, str]):
+def copy_saves_for_rom(rom_path: Union[Path, str], src_save_format: SaveFormat, src_savedir: Union[Path, str], dst_save_format: SaveFormat, dst_savedir: Union[Path, str], backup: bool = True, force: bool = False):
     """For the given ROM, copy the save files from one save location to another."""
     # Use the game's filename and MD5 hash to find the appropriate files/directories, then copy and convert.
     rom_path, src_savedir, dst_savedir = Path(rom_path), Path(src_savedir), Path(dst_savedir)
@@ -45,7 +43,7 @@ def copy_saves_for_rom(rom_path: Union[Path, str], src_save_format: SaveFormat, 
     src_savegame = _new_savegame(src_save_format).import_from_disk(rom_path, src_savedir)
     if src_savegame.has_save():
         dst_savegame = _new_savegame(dst_save_format).import_from_savegame(src_savegame)
-        dst_savegame.export_to_disk(rom_path, dst_savedir, backup=True)
+        dst_savegame.export_to_disk(rom_path, dst_savedir, backup, force)
         _logger.info("copy complete: %s", rom_path)
     else:
         _logger.info("no save found: %s", rom_path)
