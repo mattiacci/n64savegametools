@@ -34,39 +34,39 @@ The app assumes the savegave files are named and organized the default way for e
 
 ```
 F-Zero X (USA).z64
-Perfect Dark (USA).v64
 Paper Mario (USA).n64
+Perfect Dark (USA).v64
 ```
 
 Everdrive 64's "gamedata" folder should look like:
 
 ```
 F-Zero X (USA).srm
+Paper Mario (USA).fla
 Perfect Dark (USA).eep
 Perfect Dark (USA).mpk
 Perfect Dark (USA)_Cont_2.mpk
-Paper Mario (USA).fla
 ```
 
 Project64's "Save" folder should look like:
 
 ```
 F-ZERO X-097DD1B59B459B2EEB4D821441946768/
-	F-ZERO X.sra
-Perfect Dark-ECACDBDC93C3087627A775DCC16AEC7A/
-	Perfect Dark.eep
-	Perfect Dark_Cont_1.mpk
-	Perfect Dark_Cont_2.mpk
+    F-ZERO X.sra
 PAPER MARIO-BA04CD8C8B8EB7DFC698D9C4C8E40785/
-	PAPER MARIO.fla
+    PAPER MARIO.fla
+Perfect Dark-ECACDBDC93C3087627A775DCC16AEC7A/
+    Perfect Dark.eep
+    Perfect Dark_Cont_1.mpk
+    Perfect Dark_Cont_2.mpk
 ```
 
 RetroArch's "saves" folder should look like:
 
 ```
 F-Zero X (USA).srm
-Perfect Dark (USA).srm
 Paper Mario (USA).srm
+Perfect Dark (USA).srm
 ```
 
 ## Limitations
