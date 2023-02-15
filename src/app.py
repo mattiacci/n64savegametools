@@ -15,27 +15,27 @@ def main():
             A utility that can convert Nintendo 64 savegames into various formats.
             """),
         epilog=textwrap.dedent(r"""
-            Example usage to convert Project64 saves into Mupen64Plus
-                (e.g. RetroArch) format:
-            python app.py --src-dir 'C:\Program Files (x86)\Project64 3.0\Save' \
-                --src-format project64 --dst-dir \
-                'C:\Program Files (x86)\Steam\steamapps\common\RetroArch\saves' \
-                --dst-format mupen64plus --rom-dir 'X:\roms\n64'
+            Example usage to convert Project64 saves into Mupen64+ (i.e. RetroArch) format:
+            python app.py --rom-dir 'X:\roms\n64' \
+                --src-format project64 \
+                --src-dir 'C:\Program Files (x86)\Project64 3.0\Save' \
+                --dst-format mupen64plus \
+                --dst-dir 'C:\Program Files (x86)\Steam\steamapps\common\RetroArch\saves'
             """))
     parser.add_argument('-r', '--recursive', action="store_true",
         help="Search the provided ROM directory recursively")
     parser.add_argument('--rom-dir', required=True, action="store",
         help="Directory of N64 ROMs")
-    parser.add_argument('--src-dir', required=True, action="store",
-        help="Source directory for savegames")
     parser.add_argument('--src-format', required=True, action="store",
         choices=('everdrive', 'mupen64plus', 'project64'),
         help="Source directory's savegame format")
-    parser.add_argument('--dst-dir', required=True, action="store",
-        help="Destination directory for savegames")
+    parser.add_argument('--src-dir', required=True, action="store",
+        help="Source directory for savegames")
     parser.add_argument('--dst-format', required=True, action="store",
         choices=('everdrive', 'mupen64plus', 'project64'),
         help="Destination directory's savegame format")
+    parser.add_argument('--dst-dir', required=True, action="store",
+        help="Destination directory for savegames")
     parser.add_argument('--loglevel', action="store", default='warning',
         choices=('critical', 'error', 'warning', 'info', 'debug'),
         help="Set the log level")

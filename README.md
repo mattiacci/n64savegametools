@@ -73,8 +73,10 @@ Perfect Dark (USA).srm
 
  *  Has no tests
      *  I intend to fix this first, once I learn how.
- *  Is only a CLI
-     *  A UI would be more accessible; maybe someday?
+ *  Requires Python to be installed
+     *  Automating the creation of executable releases via PyInstaller would be nice
+ *  Has only a CLI
+     *  A GUI would be more accessible; maybe someday?
  *  Has no configuration
      *  Eventually it'd be nice to set the directories in config, rather than specifying them each time.
  *  Only overwrites saves when the source save has a newer timestamp
