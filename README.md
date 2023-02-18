@@ -83,3 +83,12 @@ Perfect Dark (USA).srm
      *  This is optional internally, but it's not yet exposed.
  *  Backs up saves before overwriting, by placing them in a "backup" folder
      *  This is optional internally, but it's not yet exposed.
+
+## Development
+
+Until it's automated, do the following before committing:
+
+```sh
+mypy src/app.py
+pytest --pyargs src/n64savegametools
+```
